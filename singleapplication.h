@@ -28,7 +28,7 @@
 #include <QtNetwork/QLocalSocket>
 
 #ifndef QAPPLICATION_CLASS
-  #define QAPPLICATION_CLASS QCoreApplication
+#define QAPPLICATION_CLASS QApplication
 #endif
 
 #include QT_STRINGIFY(QAPPLICATION_CLASS)
@@ -46,7 +46,7 @@ class SingleApplication : public QAPPLICATION_CLASS
 
     using app_t = QAPPLICATION_CLASS;
 
-public:
+  public:
     /**
      * @brief Mode of operation of `SingleApplication`.
      * Whether the block should be user-wide or system-wide and whether the
@@ -56,7 +56,8 @@ public:
      * user, in which case the User/System modes will have no effect and the
      * block will be user wide.
      */
-    enum Mode {
+    enum Mode
+    {
         /** The `SingleApplication` block should apply user wide
          * (this adds user specific data to the key used for the shared memory and server name)
          * */
@@ -100,7 +101,8 @@ public:
      * Usually 4*timeout would be the worst case (fail) scenario.
      * @see See the corresponding `QAPPLICATION_CLASS` constructor for reference
      */
-    explicit SingleApplication( int &argc, char *argv[], bool allowSecondary = false, Options options = Mode::User, int timeout = 1000, const QString &userData = {} );
+    explicit SingleApplication(int &argc, char *argv[], bool allowSecondary = false, Options options = Mode::User,
+                               int timeout = 1000, const QString &userData = {});
     ~SingleApplication() override;
 
     /**
@@ -142,9 +144,10 @@ public:
     /**
      * @brief Mode of operation of sendMessage.
      */
-    enum SendMode {
-        NonBlocking,  /** Do not wait for the primary instance termination and return immediately */
-        BlockUntilPrimaryExit,  /** Wait until the primary instance is terminated */
+    enum SendMode
+    {
+        NonBlocking,           /** Do not wait for the primary instance termination and return immediately */
+        BlockUntilPrimaryExit, /** Wait until the primary instance is terminated */
     };
 
     /**
@@ -155,7 +158,7 @@ public:
      * @returns `true` on success
      * @note sendMessage() will return false if invoked from the primary instance
      */
-    bool sendMessage( const QByteArray &message, int timeout = 100, SendMode sendMode = NonBlocking );
+    bool sendMessage(const QByteArray &message, int timeout = 100, SendMode sendMode = NonBlocking);
 
     /**
      * @brief Get the set user data.
@@ -163,7 +166,7 @@ public:
      */
     QStringList userData() const;
 
-Q_SIGNALS:
+  Q_SIGNALS:
     /**
      * @brief Triggered whenever a new instance had been started,
      * except for secondary instances if the `Mode::SecondaryNotification` flag is not specified
@@ -173,9 +176,9 @@ Q_SIGNALS:
     /**
      * @brief Triggered whenever there is a message received from a secondary instance
      */
-    void receivedMessage( quint32 instanceId, QByteArray message );
+    void receivedMessage(quint32 instanceId, QByteArray message);
 
-private:
+  private:
     SingleApplicationPrivate *d_ptr;
     Q_DECLARE_PRIVATE(SingleApplication)
     void abortSafely();
